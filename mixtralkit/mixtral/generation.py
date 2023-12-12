@@ -92,13 +92,10 @@ class Mixtral:
         torch.set_default_tensor_type(torch.cuda.HalfTensor)
         model = MoETorchTransformer(model_args)
         print(f"=== created Mixtral 8x7B. Experts spread over {num_gpus} GPUs ===")
-        model_param_keys = []
-        for key, value in model.named_parameters():
-            model_param_keys.append(key)
-
+        model_param_keys = [key for key, value in model.named_parameters()]
         checkpoint = torch.load(ckpt_path, map_location="cpu")
-        print("Total number of model parameters:{}".format(len(model_param_keys)))
-        print("Total number of checkpoint parameters:{}".format(len(checkpoint)))
+        print(f"Total number of model parameters:{len(model_param_keys)}")
+        print(f"Total number of checkpoint parameters:{len(checkpoint)}")
 
         model.load_state_dict(checkpoint, strict=False)
         print(f"Loaded in {time.time() - start_time:.2f} seconds")
