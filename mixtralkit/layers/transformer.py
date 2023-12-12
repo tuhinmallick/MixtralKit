@@ -70,8 +70,7 @@ class TorchTransformerBlock(nn.Module):
         h = x + self.attention.forward(
             self.attention_norm(x), start_pos, freqs_cis, mask
         )
-        out = h + self.feed_forward.forward(self.ffn_norm(h))
-        return out
+        return h + self.feed_forward.forward(self.ffn_norm(h))
 
 
 class FairScaleTransformerBlock(TorchTransformerBlock):

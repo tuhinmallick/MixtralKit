@@ -30,20 +30,16 @@ class MoETorchFFN(nn.Module):
         )
         self.gate = nn.Linear(
             kwargs["dim"], num_experts, bias=False)
-        
+
         self.num_experts_per_tok = num_experts_per_tok
         self.gate_softmax = gate_softmax
-        print("Softmax for Gate:{}".format(str(gate_softmax)))
+        print(f"Softmax for Gate:{gate_softmax}")
 
     def forward(self, x):
         orig_shape = x.shape
         x = x.view(-1, x.shape[-1])
 
-        if self.gate_softmax:
-            scores = self.gate(x).softmax(dim=-1)
-        else:
-            scores = self.gate(x)
-
+        scores = self.gate(x).softmax(dim=-1) if self.gate_softmax else self.gate(x)
         expert_weights, expert_indices = torch.topk(
             scores, self.num_experts_per_tok, dim=-1)
         expert_weights = expert_weights.softmax(dim=-1)
@@ -94,11 +90,11 @@ class MoEFairScaleFFN(nn.Module):
             ColumnParallelLinear,
         )
         self.experts = nn.ModuleList(
-            [FairScaleFFN(**kwargs) for i in range(num_experts)]
+            [FairScaleFFN(**kwargs) for _ in range(num_experts)]
         )
         self.gate = ColumnParallelLinear(
             kwargs["dim"], num_experts, bias=False, init_method=lambda x: x
-        )        
+        )
         self.num_experts_per_tok = num_experts_per_tok
 
     def forward(self, x):

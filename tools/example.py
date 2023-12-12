@@ -18,8 +18,7 @@ def parse_args():
                         type=str)
     parser.add_argument('--num-gpus', type=int)
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def main():
@@ -54,8 +53,8 @@ def main():
     )
     for prompt, result in zip(prompts, results):
         print("="*30 + "Example START" + "="*30 + '\n')
-        print("[Prompt]:\n{}\n".format(prompt))
-        print("[Response]:\n{}\n".format(result['generation']))
+        print(f"[Prompt]:\n{prompt}\n")
+        print(f"[Response]:\n{result['generation']}\n")
         print("="*30 + "Example END" + "="*30 + '\n')
 
 
